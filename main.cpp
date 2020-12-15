@@ -15,25 +15,36 @@ struct Node{
 };
 
 class _1_28{
-    int *T;
-    std::stack<int> Q;
+    bool *T;
+    Node *first;
     _1_28(int n){
-        T = new int[n];
+        T = new bool[n];
         for (int i = 0; i < n; ++i) {
-            T[i] = -1;
+            T[i] = false;
         }
     }
     ~_1_28(){
         delete []T;
     }
     void Select(){
-        if(!Q.empty()){
-            T[Q.top()] = -1;
-            Q.pop();
+        if(first!= nullptr){
+            T[first->value] = -1;
+            Node *temp = first;
+            first = first->next;
+            delete temp;
         }
     }
     bool Search(int i){
-        return T[i] != -1;
+        return T[i];
+    }
+    void insert(int i){
+        T[i] = true;
+        Node *T = new Node(i);
+        if (first != nullptr){
+            T->next = first;
+            first = T;
+        } else
+            first = T;
     }
 };
 
