@@ -1,13 +1,18 @@
 #include <iostream>
-#include <stack>
-
+#include <vector>
 struct Node{
-    int value;
+    long long value;
     Node* next;
     Node* prev;
     Node* min;
-    Node(int t){
+    Node(long long t){
         value = t;
+        prev = nullptr;
+        next = nullptr;
+        min = nullptr;
+    }
+    Node(Node* t){
+        value = reinterpret_cast<long long>(t);
         prev = nullptr;
         next = nullptr;
         min = nullptr;
@@ -15,9 +20,12 @@ struct Node{
 };
 
 class _1_28{
+public:
     bool *T;
     Node *first;
+    int size;
     _1_28(int n){
+        size = n;
         T = new bool[n];
         for (int i = 0; i < n; ++i) {
             T[i] = false;
@@ -46,11 +54,20 @@ class _1_28{
         } else
             first = T;
     }
+    void print(){
+        for (int i = 0; i < size; ++i) {
+            if (T[i])
+                std::cout << i << " ";
+        }
+        std::cout << std::endl;
+    }
 };
 
 class _1_29{
+public:
     Node* first;
     Node* *T;
+
     _1_29(int N){
         first = nullptr;
         T = new Node*[N];
@@ -59,26 +76,35 @@ class _1_29{
         }
     }
     ~_1_29(){
-        while(!first){
+        while(first != nullptr){
             Node *t = first;
             first = first->next;
             delete t;
         }
     }
     void push(int i){
-        if(T[i] != nullptr) {
-            Node *N = new Node(i);
-            N->next = first;
-            first->prev = N;
-            first = N;
-            T[i] = first;
+        Node *temp = new Node(i);
+        Node *tempT = new Node(temp);
+        if(first == nullptr)
+            first = temp;
+        else {
+            temp->next = first;
+            first = temp;
+        }
+        if(T[i] == nullptr){
+            T[i] = tempT;
+        } else{
+            tempT->next = T[i];
+            T[i] = tempT;
         }
     }
     void pop(){
         if (first != nullptr){
             Node *temp = first;
             first = first->next;
-            T[temp->value] = nullptr;
+            Node *tempT = T[temp->value];
+            T[temp->value] = tempT->next;
+            delete tempT;
             delete temp;
         }
     }
@@ -87,7 +113,7 @@ class _1_29{
     }
     void Delete(int i){
         if (T[i] != nullptr){
-            Node *temp = T[i];
+            Node *temp = reinterpret_cast<Node *>(T[i]->value);
             if (temp->prev != nullptr) {
                 temp->prev->next = temp->next;
                 temp->next->prev = temp->prev;
@@ -97,12 +123,23 @@ class _1_29{
                   first->prev = nullptr;
             }
             delete temp;
-            T[i] = nullptr;
+            Node *tempT = reinterpret_cast<Node *>(T[i]->value);
+            T[i] = tempT->next;
+            delete tempT;
         }
+    }
+    void print(){
+        Node *T = first;
+        while (T!= nullptr){
+            std::cout << T->value << " ";
+            T = T->next;
+        }
+        std::cout << std::endl;
     }
 };
 
 class _1_30{
+public:
     Node *first;
     Node *min;
     _1_30(){
@@ -164,12 +201,28 @@ class _1_30{
 
         }
     }
-
-
-
+    void print(){
+        Node *T = first;
+        while (T!= nullptr){
+            std::cout << T->value << " ";
+        }
+        std::cout << std::endl;
+    }
 };
 
 int main() {
-    std::cout << "Hello, World!" << std::endl;
+    _1_28 object0(20);
+    _1_29 object1(20);
+
+
+    object0.insert(1);
+    object0.insert(2);
+    object0.insert(3);
+    object0.print();
+    object1.push(1);
+    object1.push(2);
+    object1.push(3);
+    object1.pop();
+    object1.print();
     return 0;
 }
